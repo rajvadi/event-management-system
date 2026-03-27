@@ -231,31 +231,58 @@
                             <span class="px-4 py-2 text-gray-500">← Prev</span>
                         @else
                             <a href="{{ $events->previousPageUrl() }}"
-                            class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 transition">
+                               class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 transition">
                                 ← Prev
                             </a>
                         @endif
 
-                        <!-- Pages -->
+                        <!-- Page Numbers -->
                         <div class="flex items-center gap-2">
-                            @foreach ($events->getUrlRange(1, $events->lastPage()) as $page => $url)
+
+                            {{-- Always show first page --}}
+                            @if ($events->currentPage() > 3)
+                                <a href="{{ $events->url(1) }}"
+                                   class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10">
+                                    1
+                                </a>
+
+                                @if ($events->currentPage() > 4)
+                                    <span class="px-2 text-gray-400">...</span>
+                                @endif
+                            @endif
+
+                            {{-- Middle pages --}}
+                            @foreach (range(max(1, $events->currentPage() - 2), min($events->lastPage(), $events->currentPage() + 2)) as $page)
                                 @if ($page == $events->currentPage())
                                     <span class="px-4 py-2 rounded-lg bg-violet-600 text-white font-semibold">
                                         {{ $page }}
                                     </span>
                                 @else
-                                    <a href="{{ $url }}"
-                                    class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 transition">
+                                    <a href="{{ $events->url($page) }}"
+                                       class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10">
                                         {{ $page }}
                                     </a>
                                 @endif
                             @endforeach
+
+                            {{-- Last page --}}
+                            @if ($events->currentPage() < $events->lastPage() - 2)
+                                @if ($events->currentPage() < $events->lastPage() - 3)
+                                    <span class="px-2 text-gray-400">...</span>
+                                @endif
+
+                                <a href="{{ $events->url($events->lastPage()) }}"
+                                   class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10">
+                                    {{ $events->lastPage() }}
+                                </a>
+                            @endif
+
                         </div>
 
                         <!-- Next -->
                         @if ($events->hasMorePages())
                             <a href="{{ $events->nextPageUrl() }}"
-                            class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 transition">
+                               class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 transition">
                                 Next →
                             </a>
                         @else
